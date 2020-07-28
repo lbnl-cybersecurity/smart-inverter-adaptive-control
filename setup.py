@@ -33,12 +33,12 @@ setup(
     #distclass=BinaryDistribution,
     #cmdclass={"build_ext": build_ext},
     packages=find_packages(),
-    description=("A system for applying deep reinforcement learning and "
+    description=("A system for applying"
                  "control to distributed grid"),
     long_description=open("README.md").read(),
-    url="https://github.com/lbnl-cybersecurity/ceds-cigar",
+    url="https://github.com/lbnl-cybersecurity/smart-inverter-adaptive-control",
     keywords=("distributed grid"
-              "reinforcement-learning deep-learning python"),
+              "adaptive-control python"),
     install_requires=_read_requirements_file(),
     zip_safe=False,
     scripts=['pycigar/__init__.py',]

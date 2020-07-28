@@ -9,7 +9,6 @@ from pycigar.controllers import FixedController
 from pycigar.controllers import AdaptiveFixedController
 from pycigar.controllers import UnbalancedFixedController
 
-from pycigar.controllers import RLController
 import numpy as np
 
 
@@ -74,7 +73,6 @@ class OpenDSSDevice(KernelDevice):
         self.all_device_ids = []
         self.pv_device_ids = []
 
-        self.rl_device_ids = []
         self.adaptive_device_ids = []
         self.fixed_device_ids = []
 
@@ -140,8 +138,6 @@ class OpenDSSDevice(KernelDevice):
             self.adaptive_device_ids.append(device_id)
         elif controller[0] == FixedController or controller[0] == AdaptiveFixedController or controller[0] == UnbalancedFixedController:
             self.fixed_device_ids.append(device_id)
-        elif controller[0] == RLController:
-            self.rl_device_ids.append(device_id)
 
         self.devices[device_id] = {
             "device": device_obj,
@@ -166,8 +162,6 @@ class OpenDSSDevice(KernelDevice):
                 self.adaptive_device_ids.append(adversary_device_id)
             if adversary_controller[0] == FixedController or adversary_controller[0] == AdaptiveFixedController or adversary_controller[0] == UnbalancedFixedController:
                 self.fixed_device_ids.append(adversary_device_id)
-            if adversary_controller[0] == RLController:
-                self.rl_device_ids.append(adversary_device_id)
 
             self.devices[adversary_device_id] = {
                 "device": adversary_device_obj,
@@ -234,16 +228,8 @@ class OpenDSSDevice(KernelDevice):
 
     def update_kernel_device_info(self, device_id):
         if device_id in self.pv_device_ids:
-            if isinstance(self.devices[device_id]["controller"], RLController):
-                self.rl_device_ids.append(device_id)
-                if device_id in self.fixed_device_ids:
-                    self.fixed_device_ids.remove(device_id)
-                if device_id in self.adaptive_device_ids:
-                    self.adaptive_device_ids.remove(device_id)
-            elif isinstance(self.devices[device_id]["controller"], FixedController) or isinstance(self.devices[device_id]["controller"], AdaptiveFixedController):
+            if isinstance(self.devices[device_id]["controller"], FixedController) or isinstance(self.devices[device_id]["controller"], AdaptiveFixedController):
                 self.fixed_device_ids.append(device_id)
-                if device_id in self.rl_device_ids:
-                    self.rl_device_ids.remove(device_id)
                 if device_id in self.adaptive_device_ids:
                     self.adaptive_device_ids.remove(device_id)
 
@@ -279,16 +265,6 @@ class OpenDSSDevice(KernelDevice):
             List of PV device ids
         """
         return self.pv_device_ids
-
-    def get_rl_device_ids(self):
-        """Return the list  of PV device ids controlled by RL agents.
-
-        Returns
-        -------
-        list
-            List of RL device ids
-        """
-        return self.rl_device_ids
 
     def get_solar_generation(self, device_id):
         """Return the solar generation value at the current timestep.

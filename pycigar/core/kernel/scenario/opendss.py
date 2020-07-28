@@ -7,7 +7,6 @@ from pycigar.controllers import FixedController
 from pycigar.controllers import AdaptiveFixedController
 from pycigar.controllers import UnbalancedFixedController
 
-from pycigar.controllers import RLController
 import os
 import numpy as np
 import pandas as pd
@@ -92,8 +91,6 @@ class OpenDSSScenario(KernelScenario):
                     if 'controller' in device:
                         if device['controller'] == 'adaptive_inverter_controller':
                             device_controller = AdaptiveInverterController
-                        elif device['controller'] == 'rl_controller':
-                            device_controller = RLController
                         elif device['controller'] == 'fixed_controller':
                             device_controller = FixedController
                         elif device['controller'] == 'adaptive_fixed_controller':
@@ -109,8 +106,6 @@ class OpenDSSScenario(KernelScenario):
                     if 'adversary_controller' in device:
                         if device['adversary_controller'] == 'adaptive_inverter_controller':
                             adversary_device_controller = AdaptiveInverterController
-                        elif device['adversary_controller'] == 'rl_controller':
-                            adversary_device_controller = RLController
                         elif device['adversary_controller'] == 'fixed_controller':
                             adversary_device_controller = FixedController
                         elif device['adversary_controller'] == 'adaptive_fixed_controller':

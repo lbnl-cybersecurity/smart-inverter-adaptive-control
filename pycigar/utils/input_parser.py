@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 
-def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=None, benchmark=False, percentage_hack=0.45, adv=False, norl_mode=False, vectorized_mode=False):
+def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=None, benchmark=False, percentage_hack=0.45, vectorized_mode=False):
     """Take multiple .csv files and parse them into the .yml file that required by pycigar.
     Parameters
     ----------
@@ -130,9 +130,7 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
         device = {}
         device['name'] = 'inverter_' + node.lower()
         device['type'] = 'pv_device'
-        device['controller'] = 'rl_controller'
-        if norl_mode:
-            device['controller'] = 'adaptive_inverter_controller'
+        device['controller'] = 'adaptive_inverter_controller'
         device['custom_configs'] = {}
         device['custom_configs']['default_control_setting'] = node_default_control_setting
         device['custom_configs']['delay_timer'] = 60
@@ -149,10 +147,7 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
             device['custom_configs']['low_pass_filter_measure_std'] = low_pass_filter_measure_std
             device['custom_configs']['low_pass_filter_output_std'] = low_pass_filter_output_std
 
-        if not adv:
-            device['adversary_controller'] = 'adaptive_fixed_controller'
-        else:
-            device['adversary_controller'] = 'rl_controller'
+        device['adversary_controller'] = 'adaptive_fixed_controller'
         device['adversary_custom_configs'] = {}
         device['adversary_custom_configs']['default_control_setting'] = [1.014, 1.015, 1.015, 1.016, 1.017]
         device['hack'] = [250, percentage_hack, 500]

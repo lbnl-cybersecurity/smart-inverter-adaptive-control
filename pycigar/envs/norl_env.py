@@ -1,16 +1,40 @@
 import numpy as np
-from gym.spaces.box import Box
-
-from pycigar.envs.base import Env
+from pycigar.core.kernel.kernel import Kernel
 from pycigar.utils.logging import logger
 from copy import deepcopy
+import traceback
+import atexit
 
-class NoRLEnv(Env):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class NoRLEnv:
+    def __init__(self, sim_params, simulator='opendss'):
+        """Initialize the environment.
+
+        Parameters
+        ----------
+        sim_params : dict
+            A dictionary of simulation information. for example: /examples/rl_config_scenarios.yaml
+        simulator : str
+            The name of simulator we want to use, by default it is OpenDSS.
+        """
+        self.state = None
+        self.simulator = simulator
+
+        # initialize the kernel
+        self.k = Kernel(simulator=self.simulator,
+                        sim_params=sim_params)
+
+        # start an instance of the simulator (ex. OpenDSS)
+        kernel_api = self.k.simulation.start_simulation()
+        # pass the API to all sub-kernels
+        self.k.pass_api(kernel_api)
+        # start the corresponding scenario
+        # self.k.scenario.start_scenario()
+
+        # when exit the environment, trigger function terminate to clear all attached processes.
+        atexit.register(self.terminate)
 
 
-    def step(self, rl_actions=None):
+    def step(self):
         """See parent class.
         """
 
@@ -49,5 +73,19 @@ class NoRLEnv(Env):
 
         return done
 
-    def get_state(self):
-        return None
+    def reset(self):
+        self.env_time = 0
+        self.k.update(reset=True)
+        self.sim_params = self.k.sim_params
+
+        self.INIT_ACTION = {}
+        pv_device_ids = self.k.device.get_pv_device_ids()
+        for device_id in pv_device_ids:
+            self.INIT_ACTION[device_id] = np.array(self.k.device.get_control_setting(device_id))
+
+    def terminate(self):
+        try:
+            # close everything within the kernel
+            self.k.close()
+        except FileNotFoundError:
+            print(traceback.format_exc())
