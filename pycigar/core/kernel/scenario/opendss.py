@@ -6,6 +6,7 @@ from pycigar.controllers import AdaptiveInverterController
 from pycigar.controllers import FixedController
 from pycigar.controllers import AdaptiveFixedController
 from pycigar.controllers import UnbalancedFixedController
+from pycigar.controllers import CustomAdaptiveInverterController
 
 import os
 import numpy as np
@@ -97,6 +98,8 @@ class OpenDSSScenario(KernelScenario):
                             device_controller = AdaptiveFixedController
                         elif device['controller'] == 'unbalanced_fixed_controller':
                             device_controller = UnbalancedFixedController
+                        elif device['controller'] == 'custom_adaptive_inverter_controller':
+                            device_controller = CustomAdaptiveInverterController
 
                         device_configs = device['custom_configs']
                     else:
@@ -112,6 +115,8 @@ class OpenDSSScenario(KernelScenario):
                             adversary_device_controller = AdaptiveFixedController
                         elif device['adversary_controller'] == 'unbalanced_fixed_controller':
                             adversary_device_controller = UnbalancedFixedController
+                        elif device['adversary_controller'] == 'custom_adaptive_inverter_controller':
+                            adversary_device_controller = CustomAdaptiveInverterController
 
                         adversary_device_configs = device['adversary_custom_configs']
                         if sim_params['tune_search'] is True:

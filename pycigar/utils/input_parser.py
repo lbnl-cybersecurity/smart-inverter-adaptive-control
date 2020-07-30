@@ -147,9 +147,12 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
             device['custom_configs']['low_pass_filter_measure_std'] = low_pass_filter_measure_std
             device['custom_configs']['low_pass_filter_output_std'] = low_pass_filter_output_std
 
-        device['adversary_controller'] = 'adaptive_fixed_controller'
+        device['adversary_controller'] = 'custom_adaptive_inverter_controller'
         device['adversary_custom_configs'] = {}
         device['adversary_custom_configs']['default_control_setting'] = [1.014, 1.015, 1.015, 1.016, 1.017]
+        device['adversary_custom_configs']['y_threshold'] = 0.03
+        device['adversary_custom_configs']['k1'] = 1
+        device['adversary_custom_configs']['k2'] = 1
         device['hack'] = [250, percentage_hack, 500]
         node_description['devices'].append(device)
 

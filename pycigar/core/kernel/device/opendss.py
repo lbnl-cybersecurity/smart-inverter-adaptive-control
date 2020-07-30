@@ -8,6 +8,7 @@ from pycigar.controllers import FixedController
 # from pycigar.controllers import MimicController
 from pycigar.controllers import AdaptiveFixedController
 from pycigar.controllers import UnbalancedFixedController
+from pycigar.controllers import CustomAdaptiveInverterController
 
 import numpy as np
 
@@ -134,7 +135,7 @@ class OpenDSSDevice(KernelDevice):
 
         controller_obj = controller[0](device_id, additional_params=controller[1])
 
-        if controller[0] == AdaptiveInverterController:
+        if controller[0] == AdaptiveInverterController or CustomAdaptiveInverterController:
             self.adaptive_device_ids.append(device_id)
         elif controller[0] == FixedController or controller[0] == AdaptiveFixedController or controller[0] == UnbalancedFixedController:
             self.fixed_device_ids.append(device_id)
@@ -158,7 +159,7 @@ class OpenDSSDevice(KernelDevice):
             adversary_controller_obj = \
                 adversary_controller[0](adversary_device_id, adversary_controller[1])
 
-            if adversary_controller[0] == AdaptiveInverterController:
+            if adversary_controller[0] == AdaptiveInverterController or AdaptiveInverterController:
                 self.adaptive_device_ids.append(adversary_device_id)
             if adversary_controller[0] == FixedController or adversary_controller[0] == AdaptiveFixedController or adversary_controller[0] == UnbalancedFixedController:
                 self.fixed_device_ids.append(adversary_device_id)
@@ -480,7 +481,7 @@ class OpenDSSDevice(KernelDevice):
         for i, device_id in enumerate(device_id):
             if control_setting[i] is not None:
                 device = self.devices[device_id]['device']
-                device.set_control_setting(control_setting[i])
+                device.set_control_setting(control_setting[i]) if type(control_setting[i]) is not tuple else device.set_control_setting(*control_setting[i])
 
                 if self.master_kernel.sim_params['vectorized_mode']:
                     self.vectorized_pv_inverter_device.set_control_setting(device_id, control_setting[i])
