@@ -54,7 +54,7 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
             'custom_configs': {'solution_mode': 1,
                               'solution_number': 1,
                               'solution_step_size': 1,
-                              'solution_control_mode': -1,
+                              'solution_control_mode': 2,
                               'solution_max_control_iterations': 1000000,
                               'solution_max_iterations': 30000,
                               'power_factor': 0.9},
@@ -73,7 +73,8 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
                 'max_tap_change': 30,
                 'forward_band': 16,
                 'tap_number': 2,
-                'tap_delay': 0
+                'tap_delay': 0,
+                'delay': 30
             }
         }
     }
