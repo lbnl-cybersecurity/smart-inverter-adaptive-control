@@ -16,69 +16,61 @@ class CustomAdaptiveInverterController(BaseController):
         )
         self.lpf_delta_t = additional_params.get('delta_t', 1)
         self.gain = additional_params.get('gain', 1e5)
-        self.y_threshold = additional_params.get('y_threshold', 0.03)
-        self.k1 = additional_params.get('k1', 1)
-        self.k2 = additional_params.get('k2', 1)
-
+        self.y_threshold = additional_params.get('y_threshold', 0.02)
+        self.gamma = additional_params.get('gamma', 1e-3)
+        self.k = additional_params.get('k', 50)
+        self.delta_t = additional_params.get('delta_t', 1)
+        
         self.init_params = copy.deepcopy(additional_params)
-        self.lpf_psi = deque([0]*2, maxlen=2)
-        self.lpf_epsilon = deque([0]*2, maxlen=2)
-        self.lpf_y1 = deque([0]*2, maxlen=2)
-        self.lpf_high_pass_filter = 1
-        self.lpf_low_pass_filter = 0.1
+        self.lpf_vT = deque([0]*2, maxlen=2)
+        self.lpf_vAvg = deque([0]*2, maxlen=2)
+        self.lpf_m = additional_params.get('lpf_m', 1)
+        self.lpf_avg = additional_params.get('lpf_avg', 10)
 
         self.x = deque([0]*15, maxlen=15)
         self.y = 0
         self.v_offset = 0
-
+        self.dir = 1
+        
     def get_action(self, env):
         """See parent class."""
+        T = self.delta_t
         if not hasattr(self, 'node_id'):
             self.node_id = env.k.device.get_node_connected_to(self.device_id)
 
         if not hasattr(self, 'step'):
             self.step = np.hstack((1 * np.ones(11), np.linspace(1, -1, 7), -1 * np.ones(11)))
 
-        if env.k.time > 1:
-            vk = abs(env.k.node.nodes[self.node_id]['voltage'][env.k.time - 1])
 
-            #self.x.append(vk)
-            if env.k.time >= 16:
-                output = abs(env.k.node.nodes[self.node_id]['voltage'][env.k.time-16:env.k.time - 1])
-            else:
-                self.x.append(vk)
-                output = np.array(self.x)
+        vk = abs(env.k.node.nodes[self.node_id]['voltage'][env.k.time - 1])
+        vkm1 = abs(env.k.node.nodes[self.node_id]['voltage'][env.k.time - 2])
 
-            if np.max(output[STEP_BUFFER:-STEP_BUFFER]) - np.min(output[STEP_BUFFER:-STEP_BUFFER]) > 0.004:
-                norm_data = -1 + 2 * (output - np.min(output)) / (np.max(output) - np.min(output))
-                step_corr = np.convolve(norm_data, self.step, mode='valid')
 
-                if max(abs(step_corr)) > 10:
-                    output = np.ones(15)
-            filter_data = output[STEP_BUFFER:-STEP_BUFFER]
+        vt = (T * self.lpf_m * (vk + vkm1) -(T * self.lpf_m - 2) * (self.lpf_vT[1])) / \
+                (2 + T * self.lpf_m)
 
-            lpf_psik = (filter_data[-1] - filter_data[-2] - (self.lpf_high_pass_filter * self.lpf_delta_t / 2 - 1) * self.lpf_psi[1]) / \
-                            (1 + self.lpf_high_pass_filter * self.lpf_delta_t / 2)
-            self.lpf_psi.append(lpf_psik)
+        self.lpf_vT.append(vt)
 
-            lpf_epsilonk = self.gain * (lpf_psik ** 2)
-            self.lpf_epsilon.append(lpf_epsilonk)
+        vAvg = (T * self.lpf_avg * (vk + vkm1) -(T * self.lpf_avg - 2) * (self.lpf_vAvg[1])) / \
+                (2 + T * self.lpf_avg)
 
-            y_value = (self.lpf_delta_t * self.lpf_low_pass_filter *
-                    (self.lpf_epsilon[1] + self.lpf_epsilon[0]) - (self.lpf_delta_t * self.lpf_low_pass_filter - 2) * self.lpf_y1[1]) / \
-                    (2 + self.lpf_delta_t * self.lpf_low_pass_filter)
-            self.lpf_y1.append(y_value)
-            self.y = y_value*0.04
+        self.lpf_vAvg.append(vAvg)
+        
+        dir = 1
+        
+        if env.k.time > 100:
+            #if (vt-vAvg)**2 > self.y_threshold:
+            if (vAvg+self.v_offset > 1.08 and self.dir > 0:
+                self.dir = -2
+            elif vAvg+self.v_offset < 0.97:
+                self.dir = 1
 
-            if self.y > self.y_threshold:
-                if self.v_offset < 0.05:
-                    self.v_offset = -self.k1*self.v_offset + self.k2*self.y
-                else:
-                    self.v_offset = -self.k1*self.v_offset - self.k2*self.y
-            else:
-                self.v_offset = -self.k1*self.v_offset
+                
+            self.v_offset = self.v_offset-self.gamma*self.v_offset + self.dir*self.k*(vt-vAvg)**2
 
-                return None, {'v_offset': self.v_offset}
+        else:
+            self.v_offset=0
+        return None, {'v_offset': self.v_offset}
 
     def reset(self):
         """See parent class."""

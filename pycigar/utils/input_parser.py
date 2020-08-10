@@ -107,6 +107,13 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
     low_pass_filter_measure_std = misc_inputs_data['measurement filter time constant std'][1]
     low_pass_filter_output_mean = misc_inputs_data['output filter time constant mean'][1]
     low_pass_filter_output_std = misc_inputs_data['output filter time constant std'][1]
+    hack_start = misc_inputs_data['hack start'][1]
+    hack_end = misc_inputs_data['hack end'][1]
+    hack_update = misc_inputs_data['hack update'][1]
+    gamma = misc_inputs_data['gamma'][1]
+    k = misc_inputs_data['k'][1]    
+    lpfm_avg = misc_inputs_data['measurement filter time constant avg v'][1]
+    
     default_control_setting = [misc_inputs_data['bp1 default'][1],
                                misc_inputs_data['bp2 default'][1],
                                misc_inputs_data['bp3 default'][1],
@@ -130,13 +137,17 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
         device = {}
         device['name'] = 'inverter_' + node.lower()
         device['device'] = 'pv_device'
-        device['controller'] = 'adaptive_inverter_controller'
+        device['controller'] = 'Defender'
         device['custom_configs'] = {}
         device['custom_configs']['default_control_setting'] = node_default_control_setting
         device['custom_configs']['delay_timer'] = 60
         device['custom_configs']['threshold'] = 0.05
         device['custom_configs']['adaptive_gain'] = 20
         device['custom_configs']['is_butterworth_filter'] = False
+        device['custom_configs']['k'] = k
+        device['custom_configs']['gamma'] = gamma
+        device['custom_configs']['lpf_m'] = low_pass_filter_measure_mean
+        device['custom_configs']['lpf_avg'] = lpfm_avg
 
         if benchmark:
             device['custom_configs']['low_pass_filter_measure_mean'] = low_pass_filter_measure_mean
@@ -147,13 +158,12 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
             device['custom_configs']['low_pass_filter_measure_std'] = low_pass_filter_measure_std
             device['custom_configs']['low_pass_filter_output_std'] = low_pass_filter_output_std
 
-        device['adversary_controller'] = 'custom_adaptive_inverter_controller'
+        device['adversary_controller'] = 'Attacker'
         device['adversary_custom_configs'] = {}
         device['adversary_custom_configs']['default_control_setting'] = [1.014, 1.015, 1.015, 1.016, 1.017]
         device['adversary_custom_configs']['y_threshold'] = 0.03
-        device['adversary_custom_configs']['k1'] = 1
-        device['adversary_custom_configs']['k2'] = 1
-        device['hack'] = [250, percentage_hack, 500]
+        device['adversary_custom_configs']['hack_update'] = hack_update
+        device['hack'] = [hack_start, percentage_hack, hack_end]
         node_description['devices'].append(device)
 
         json_query['scenario_config']['nodes'].append(node_description)
