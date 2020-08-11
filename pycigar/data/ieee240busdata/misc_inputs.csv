@@ -1,7 +1,3 @@
-Oscillation Penalty,50
-Action Penalty,10
-Deviation from Optimal Penalty,10
-PsetPmax Penalty,50
 load file timestep,1
 power factor,0.9
 load scaling factor,2

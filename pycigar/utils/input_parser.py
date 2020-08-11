@@ -33,11 +33,7 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
     file_breakpoints_path = breakpoints_path
 
     json_query = {
-        'M': 50,  # weight for y-value in reward function
-        'N': 10,  # weight for taking different action from the initial action
-        'P': 10,  # weight for taking different action from last timestep action
-        'Q': 0.5,
-        'tune_search': False,
+        'tune_search': True,
         'vectorized_mode': False,
 
         'hack_setting': {'default_control_setting': [1.039, 1.04, 1.04, 1.041, 1.042]},
@@ -80,46 +76,34 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
     }
 
     # read misc_input
-    misc_inputs_data = pd.read_csv(file_misc_inputs_path, header=None)
-    misc_inputs_data = misc_inputs_data.T
-    new_header = misc_inputs_data.iloc[0]  # grab the first row for the header
-    misc_inputs_data = misc_inputs_data[1:]  # take the data less the header row
-    misc_inputs_data.columns = new_header  # set the header row as the df header
-    misc_inputs_data = misc_inputs_data.to_dict()
+    misc_inputs_data = pd.read_csv(file_misc_inputs_path, index_col=0, names=['parameter', 'value'])
+    misc_inputs_data.value = pd.to_numeric(misc_inputs_data.value, downcast='float')
 
-    M = misc_inputs_data['Oscillation Penalty'][1]
-    N = misc_inputs_data['Action Penalty'][1]
-    P = misc_inputs_data['Deviation from Optimal Penalty'][1]
-    Q = misc_inputs_data['PsetPmax Penalty'][1]
-    power_factor = misc_inputs_data['power factor'][1]
-    load_scaling_factor = misc_inputs_data['load scaling factor'][1]
-    solar_scaling_factor = misc_inputs_data['solar scaling factor'][1]
+    power_factor = misc_inputs_data.value['power factor']
+    load_scaling_factor = misc_inputs_data.value['load scaling factor']
+    solar_scaling_factor = misc_inputs_data.value['solar scaling factor']
 
-    json_query['M'] = M
-    json_query['N'] = N
-    json_query['P'] = P
-    json_query['Q'] = Q
     json_query['vectorized_mode'] = vectorized_mode
     json_query['scenario_config']['custom_configs']['load_scaling_factor'] = load_scaling_factor
     json_query['scenario_config']['custom_configs']['solar_scaling_factor'] = solar_scaling_factor
     json_query['scenario_config']['custom_configs']['power_factor'] = power_factor
 
-    low_pass_filter_measure_mean = misc_inputs_data['measurement filter time constant mean'][1]
-    low_pass_filter_measure_std = misc_inputs_data['measurement filter time constant std'][1]
-    low_pass_filter_output_mean = misc_inputs_data['output filter time constant mean'][1]
-    low_pass_filter_output_std = misc_inputs_data['output filter time constant std'][1]
-    hack_start = misc_inputs_data['hack start'][1]
-    hack_end = misc_inputs_data['hack end'][1]
-    hack_update = misc_inputs_data['hack update'][1]
-    gamma = misc_inputs_data['gamma'][1]
-    k = misc_inputs_data['k'][1]    
-    lpfm_avg = misc_inputs_data['measurement filter time constant avg v'][1]
-    
-    default_control_setting = [misc_inputs_data['bp1 default'][1],
-                               misc_inputs_data['bp2 default'][1],
-                               misc_inputs_data['bp3 default'][1],
-                               misc_inputs_data['bp4 default'][1],
-                               misc_inputs_data['bp5 default'][1]]
+    low_pass_filter_measure_mean = misc_inputs_data.value['measurement filter time constant mean']
+    low_pass_filter_measure_std = misc_inputs_data.value['measurement filter time constant std']
+    low_pass_filter_output_mean = misc_inputs_data.value['output filter time constant mean']
+    low_pass_filter_output_std = misc_inputs_data.value['output filter time constant std']
+    hack_start = misc_inputs_data.value['hack start']
+    hack_end = misc_inputs_data.value['hack end']
+    hack_update = misc_inputs_data.value['hack update']
+    gamma = misc_inputs_data.value['gamma']
+    k = misc_inputs_data.value['k']
+    lpfm_avg = misc_inputs_data.value['measurement filter time constant avg v']
+
+    default_control_setting = [misc_inputs_data.value['bp1 default'],
+                               misc_inputs_data.value['bp2 default'],
+                               misc_inputs_data.value['bp3 default'],
+                               misc_inputs_data.value['bp4 default'],
+                               misc_inputs_data.value['bp5 default']]
 
     # read load_solar_data & read
     load_solar_data = pd.read_csv(file_load_solar_path)
@@ -169,10 +153,10 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
 
         json_query['scenario_config']['nodes'].append(node_description)
 
-    max_tap_change = misc_inputs_data['max tap change default'][1]
-    forward_band = misc_inputs_data['forward band default'][1]
-    tap_number = misc_inputs_data['tap number default'][1]
-    tap_delay = misc_inputs_data['tap delay default'][1]
+    max_tap_change = misc_inputs_data.value['max tap change default']
+    forward_band = misc_inputs_data.value['forward band default']
+    tap_number = misc_inputs_data.value['tap number default']
+    tap_delay = misc_inputs_data.value['tap delay default']
 
     json_query['scenario_config']['regulators']['max_tap_change'] = max_tap_change
     json_query['scenario_config']['regulators']['forward_band'] = forward_band
