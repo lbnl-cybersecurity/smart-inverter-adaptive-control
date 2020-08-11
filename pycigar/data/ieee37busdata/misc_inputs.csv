@@ -4,8 +4,8 @@ Deviation from Optimal Penalty,18.0
 PsetPmax Penalty,50.0
 load file timestep,1.0
 power factor,0.9
-load scaling factor,1.5
-solar scaling factor,3.0
+load scaling factor,1.0
+solar scaling factor,1.5
 measurement filter time constant mean,1.0
 measurement filter time constant std,0.2
 output filter time constant mean,0.1
@@ -21,7 +21,7 @@ tap number default,0.0
 tap delay default,2.0
 hack start,250.0
 hack end,2000.0
-hack update,100.0
-measurement filter time constant avg v,10.0
+hack update,200.0
+measurement filter time constant avg v,20.0
 gamma,0.0
-k,50.0
+k,0.0

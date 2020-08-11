@@ -60,7 +60,7 @@ class CustomAdaptiveInverterController(BaseController):
         
         if env.k.time > 100:
             #if (vt-vAvg)**2 > self.y_threshold:
-            if (vAvg+self.v_offset > 1.08 and self.dir > 0:
+            if (vAvg+self.v_offset) > 1.08 and self.dir > 0:
                 self.dir = -2
             elif vAvg+self.v_offset < 0.97:
                 self.dir = 1
