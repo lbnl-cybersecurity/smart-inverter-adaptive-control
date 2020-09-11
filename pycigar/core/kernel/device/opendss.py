@@ -127,6 +127,12 @@ class OpenDSSDevice(KernelDevice):
             self.devices[device_id] = {"device": device_obj}
             self.regulator_device_ids.append(device_id)
             self.all_device_ids.extend(device_id)
+
+            if 'regulator_device' not in self.device_ids:
+                self.device_ids['regulator_device'] = [device_id]
+            else:
+                self.device_ids['regulator_device'].append(device_id)
+
             return None
 
         # create ally device
