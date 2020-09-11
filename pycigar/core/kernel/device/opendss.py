@@ -136,10 +136,16 @@ class OpenDSSDevice(KernelDevice):
             device[1]["percentage_control"] = 1 - hack[1]
 
         device_obj = pycigar_make(device[0], device_id=device_id, additional_params=device[1])
-        if device[0] not in self.device_ids:
-            self.device_ids[device[0]] = [device_id]
+        if isinstance(device_obj, PVDevice):
+            if 'pv_device' not in self.device_ids:
+                self.device_ids['pv_device'] = []
+            if device_id not in self.device_ids['pv_device']:
+                self.device_ids['pv_device'].append(device_id)
         else:
-            self.device_ids[device[0]].append(device_id)
+            if device[0] not in self.device_ids:
+                self.device_ids[device[0]] = [device_id]
+            else:
+                self.device_ids[device[0]].append(device_id)
 
 
         controller_obj = pycigar_make(controller[0], device_id=device_id, additional_params=controller[1])
@@ -154,10 +160,16 @@ class OpenDSSDevice(KernelDevice):
             device[1]["percentage_control"] = hack[1]
             adversary_device_obj = pycigar_make(device[0], device_id=adversary_device_id, additional_params=device[1])
 
-            if device[0] not in self.device_ids:
-                self.device_ids[device[0]] = [adversary_device_id]
+            if isinstance(adversary_device_obj, PVDevice):
+                if 'pv_device' not in self.device_ids:
+                    self.device_ids['pv_device'] = []
+                if adversary_device_id not in self.device_ids['pv_device']:
+                    self.device_ids['pv_device'].append(adversary_device_id)
             else:
-                self.device_ids[device[0]].append(adversary_device_id)
+                if device[0] not in self.device_ids:
+                    self.device_ids[device[0]] = [adversary_device_id]
+                else:
+                    self.device_ids[device[0]].append(adversary_device_id)
 
             adversary_controller_obj = pycigar_make(adversary_controller[0], device_id=adversary_device_id, additional_params=adversary_controller[1])
 
@@ -250,7 +262,7 @@ class OpenDSSDevice(KernelDevice):
         list
             List of RL device ids
         """
-        if 'pv_device' in self.device_ids:
+        if 'regulator_device' in self.device_ids:
             return self.device_ids['regulator_device']
         else:
             return []
