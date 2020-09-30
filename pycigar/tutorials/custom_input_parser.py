@@ -121,33 +121,41 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
         node_description['devices'] = []
         device = {}
         device['name'] = 'inverter_' + node.lower()
-        device['device'] = 'custom_pv_device'
-        device['controller'] = 'Defender'
-        device['custom_configs'] = {}
-        device['custom_configs']['default_control_setting'] = node_default_control_setting
-        device['custom_configs']['delay_timer'] = 60
-        device['custom_configs']['threshold'] = 0.05
-        device['custom_configs']['adaptive_gain'] = 20
-        device['custom_configs']['is_butterworth_filter'] = False
-        device['custom_configs']['k'] = k
-        device['custom_configs']['gamma'] = gamma
-        device['custom_configs']['lpf_m'] = low_pass_filter_measure_mean
-        device['custom_configs']['lpf_avg'] = lpfm_avg
 
+        # configuration for device
+        device['device'] = 'pv_device'
+        device['custom_device_configs'] = {}
+        device['custom_device_configs']['default_control_setting'] = node_default_control_setting
+        device['custom_device_configs']['delay_timer'] = 60
+        device['custom_device_configs']['threshold'] = 0.05
+        device['custom_device_configs']['adaptive_gain'] = 1e5
+        device['custom_device_configs']['is_butterworth_filter'] = False
+        device['custom_device_configs']['k'] = k
+        device['custom_device_configs']['gamma'] = gamma
+        device['custom_device_configs']['lpf_m'] = low_pass_filter_measure_mean
+        device['custom_device_configs']['lpf_avg'] = lpfm_avg
+        device['custom_device_configs']['low_pass_filter_measure_mean'] = low_pass_filter_measure_mean
+        device['custom_device_configs']['low_pass_filter_output_mean'] = low_pass_filter_output_mean
         if benchmark:
-            device['custom_configs']['low_pass_filter_measure_mean'] = low_pass_filter_measure_mean
-            device['custom_configs']['low_pass_filter_output_mean'] = low_pass_filter_output_mean
-        else:
-            device['custom_configs']['low_pass_filter_measure_mean'] = low_pass_filter_measure_mean
-            device['custom_configs']['low_pass_filter_output_mean'] = low_pass_filter_output_mean
-            device['custom_configs']['low_pass_filter_measure_std'] = low_pass_filter_measure_std
-            device['custom_configs']['low_pass_filter_output_std'] = low_pass_filter_output_std
+            device['custom_device_configs']['low_pass_filter_measure_std'] = low_pass_filter_measure_std
+            device['custom_device_configs']['low_pass_filter_output_std'] = low_pass_filter_output_std
 
+        # configuration of controller
+        device['controller'] = 'Defender'
+        device['custom_controller_configs'] = {}
+        device['custom_controller_configs']['default_control_setting'] = node_default_control_setting
+        device['custom_controller_configs']['adaptive_gain'] = 1e5
+        device['custom_controller_configs']['gamma'] = gamma
+        device['custom_controller_configs']['k'] = k
+        device['custom_controller_configs']['lpf_m'] = low_pass_filter_measure_mean
+        device['custom_controller_configs']['lqf_avg'] = lpfm_avg
+
+        # configuration of adversarial controller
         device['adversary_controller'] = 'Attacker'
-        device['adversary_custom_configs'] = {}
-        device['adversary_custom_configs']['default_control_setting'] = [1.014, 1.015, 1.015, 1.016, 1.017]
-        device['adversary_custom_configs']['y_threshold'] = 0.03
-        device['adversary_custom_configs']['hack_update'] = hack_update
+        device['adversary_custom_controller_configs'] = {}
+        device['adversary_custom_controller_configs']['default_control_setting'] = [1.014, 1.015, 1.015, 1.016, 1.017]
+        device['adversary_custom_controller_configs']['y_threshold'] = 0.03
+        device['adversary_custom_controller_configs']['hack_update'] = hack_update
         device['hack'] = [hack_start, percentage_hack, hack_end]
         node_description['devices'].append(device)
 
