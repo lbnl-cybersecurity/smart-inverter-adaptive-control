@@ -56,6 +56,9 @@ class PVDevice(BaseDevice):
         self.y = 0
         self.u = 0
 
+        self.voltage_state = -1
+        self.q_bar = 0
+
         self.custom_control_setting = {}
 
         # init for signal processing on Voltage
@@ -156,6 +159,12 @@ class PVDevice(BaseDevice):
 
         pk = 0
         qk = 0
+
+        self.voltage_state = -1
+        #integer representing where the voltage is in the VVC/VWC
+        self.q_bar = 0
+        #variable to log the available reactive power
+
         if k.time > 1:
             low_pass_filter_v = (T * lpf_m * (vk + vkm1) -
                                 (T * lpf_m - 2) * (self.low_pass_filter_v[1])) / \
@@ -174,30 +183,38 @@ class PVDevice(BaseDevice):
                     pk = -self.solar_irr
                     q_avail = (self.Sbar ** 2 - pk ** 2) ** (1 / 2)
 
+                    self.q_bar = q_avail
+
                     # determine VAR support
                     if low_pass_filter_v <= VBP[0]:
                         # inject all available var
                         qk = -q_avail
+                        self.voltage_state = 0
                     elif VBP[0] < low_pass_filter_v <= VBP[1]:
                         # partial VAR injection
                         c = q_avail / (VBP[1] - VBP[0])
                         qk = c * (low_pass_filter_v - VBP[1])
+                        self.voltage_state = 1
                     elif VBP[1] < low_pass_filter_v <= VBP[2]:
                         # No var support
                         qk = 0
+                        voltage_state = 2
                     elif VBP[2] < low_pass_filter_v < VBP[3]:
                         # partial Var consumption
                         c = q_avail / (VBP[3] - VBP[2])
                         qk = c * (low_pass_filter_v - VBP[2])
+                        self.voltage_state = 3
                     elif VBP[3] < low_pass_filter_v < VBP[4]:
                         # partial real power curtailment
                         d = -self.solar_irr / (VBP[4] - VBP[3])
                         pk = d * (VBP[4] - low_pass_filter_v)
                         qk = (self.Sbar ** 2 - pk ** 2) ** (1 / 2)
+                        self.voltage_state = 4
                 elif low_pass_filter_v >= VBP[4]:
                     # full real power curtailment for VAR support
                     pk = 0
                     qk = self.Sbar
+                    self.voltage_state = 5
 
             self.p_set.append(pk)
             self.q_set.append(qk)
@@ -233,6 +250,8 @@ class PVDevice(BaseDevice):
         # log history
         Logger = logger()
         Logger.log(self.device_id, 'y', self.y)
+        Logger.log(self.device_id, 'voltage_state', self.voltage_state)
+        Logger.log(self.device_id, 'q_bar', self.q_bar)
 
         Logger.log(self.device_id, 'u', self.u)
         Logger.log(self.device_id, 'p_set', self.p_set[1])
