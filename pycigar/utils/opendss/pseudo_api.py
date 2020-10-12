@@ -24,6 +24,21 @@ class PyCIGAROpenDSSAPI(object):
         """Run an custom command on simulator."""
         dss.run_command(command)
 
+        # get additional info from opendss
+        self.all_bus_name = dss.Circuit.AllBusNames()
+        self.offsets = dss.Circuit.AllNodeNames()
+        offset = {}
+        for k, v in enumerate(self.offsets):
+            offset[v] = k
+        self.offsets = offset
+        self.loads = {}
+        for load in self.get_node_ids():
+            dss.Loads.Name(load)
+            bus_phase = dss.CktElement.BusNames()[0].split('.')
+            if len(bus_phase) == 1:
+                bus_phase.extend(['1','2','3'])
+            self.loads[load] = [['.'.join([bus_phase[0], i]) for i in bus_phase[1:] if i != '0'], dss.CktElement.NumPhases()]
+
     def set_solution_mode(self, value):
         """Set solution mode on simulator."""
         dss.Solution.Mode(value)
@@ -82,6 +97,17 @@ class PyCIGAROpenDSSAPI(object):
         else:
             output = np.mean(voltage)
         return output
+
+
+    def update_all_bus_voltages(self):
+        self.puvoltage = dss.Circuit.AllBusMagPu() #work around this
+
+    def get_node_voltage(self, node_id):
+        puvoltage = 0
+        for phase in range(self.loads[node_id][1]):
+            puvoltage += self.puvoltage[self.offsets[self.loads[node_id][0][phase]]]
+        puvoltage /= self.loads[node_id][1]
+        return puvoltage
 
     def get_total_power(self):
         return np.array(dss.Circuit.TotalPower())
