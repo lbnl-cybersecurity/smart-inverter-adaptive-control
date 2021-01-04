@@ -67,6 +67,7 @@ class CustomAdaptiveInverterController(BaseController):
 
                 
             self.v_offset = self.v_offset-self.gamma*self.v_offset + self.dir*self.k*(vt-vAvg)**2
+            #TODO add dynamics for mu using bilateral transform
 
         else:
             self.v_offset=0

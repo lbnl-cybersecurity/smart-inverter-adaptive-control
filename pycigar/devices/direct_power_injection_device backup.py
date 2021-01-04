@@ -10,8 +10,7 @@ from pycigar.utils.logging import logger
 DEFAULT_CONTROL_SETTING = [0.98, 1.01, 1.02, 1.05, 1.07]
 STEP_BUFFER = 4
 
-
-class CustomPVDevice(PVDevice):
+class DirectPowerInjectionDevice(PVDevice):
     def __init__(self, device_id, additional_params):
         """Instantiate an PV device."""
         PVDevice.__init__(
@@ -21,6 +20,7 @@ class CustomPVDevice(PVDevice):
         )
 
         self.custom_control_setting = {}
+        self.q_inj = 0
 
     def update(self, k):
         """See parent class."""
@@ -28,8 +28,12 @@ class CustomPVDevice(PVDevice):
         # record voltage magnitude measurement
         if not hasattr(self, 'node_id'):
             self.node_id = k.device.get_node_connected_to(self.device_id)
-        k.node.nodes[self.node_id]['PQ_injection']['P'] += 100
-        k.node.nodes[self.node_id]['PQ_injection']['Q'] += 100
+
+        if k.time > 1:
+
+            if 'pow_inject' in self.custom_control_setting:
+                self.q_inj = self.self.custom_control_setting['pow_inject']
+                k.node.nodes[self.node_id]['PQ_injection']['Q'] += self.q_inj
 
         # log necessary info
         self.log()
@@ -49,4 +53,4 @@ class CustomPVDevice(PVDevice):
     def log(self):
         # log history
         Logger = logger()
-        Logger.log(self.device_id, 'dummy_log_value', 0)
+        Logger.log(self.device_id, 'q_inj', self.q_inj)

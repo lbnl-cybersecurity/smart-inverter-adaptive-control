@@ -174,7 +174,6 @@ class PVDevice(BaseDevice):
             
             if 'v_offset' in self.custom_control_setting:
                 low_pass_filter_v += self.custom_control_setting['v_offset']
-                #self.y = low_pass_filter_v
                 self.y = self.custom_control_setting['v_offset']
             # compute p_set and q_set
             if self.solar_irr >= self.solar_min_value:
