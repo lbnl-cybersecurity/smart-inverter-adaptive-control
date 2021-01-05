@@ -123,7 +123,7 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
         device['name'] = 'inverter_' + node.lower()
 
         # configuration for device
-        device['device'] = 'pv_device'
+        device['device'] = 'custom_pv_device'
         device['custom_device_configs'] = {}
         device['custom_device_configs']['default_control_setting'] = node_default_control_setting
         device['custom_device_configs']['delay_timer'] = 60
