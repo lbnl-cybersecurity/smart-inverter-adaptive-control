@@ -60,6 +60,7 @@ class DirectPowerInjectionDevice(PVDevice):
         self.q_bar = 0
 
         self.custom_control_setting = {}
+        self.q_inj = 0
 
         # init for signal processing on Voltage
         if self.is_butterworth_filter:
@@ -270,3 +271,5 @@ class DirectPowerInjectionDevice(PVDevice):
         Logger.log(self.device_id, 'solar_irr', self.solar_irr)
         if hasattr(self, 'node_id'):
             Logger.log_single(self.device_id, 'node', self.node_id)
+
+        Logger.log(self.device_id, 'q_inj', self.q_inj)
