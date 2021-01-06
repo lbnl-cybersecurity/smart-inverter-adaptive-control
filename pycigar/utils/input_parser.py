@@ -136,7 +136,7 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
         device['custom_device_configs']['lpf_avg'] = lpfm_avg
         device['custom_device_configs']['low_pass_filter_measure_mean'] = low_pass_filter_measure_mean
         device['custom_device_configs']['low_pass_filter_output_mean'] = low_pass_filter_output_mean
-        if benchmark:
+        if not benchmark:
             device['custom_device_configs']['low_pass_filter_measure_std'] = low_pass_filter_measure_std
             device['custom_device_configs']['low_pass_filter_output_std'] = low_pass_filter_output_std
 
