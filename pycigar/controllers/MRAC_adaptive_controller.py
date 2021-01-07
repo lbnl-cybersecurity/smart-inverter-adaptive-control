@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.linalg as LA
 from pycigar.controllers.base_controller import BaseController
 import copy
 from collections import deque
@@ -25,6 +26,8 @@ class MRAC_adaptive_controller(BaseController):
         self.gamma = additional_params.get('gamma', 1e-3)
         #simulation timestep
         self.delta_t = additional_params.get('delta_t', 1)
+        #error threshold
+        self.epsilon = additional_params.get('epsilon', 1e-4)
         
         ###Initialize arrays for storing computations
         #voltage measured from the device
@@ -61,6 +64,9 @@ class MRAC_adaptive_controller(BaseController):
 
             #compute error between measured voltage and low pass filtered meas. voltage
             e0 = -np.asarray(self.v_ref) + np.asarray(self.v_meas)
+            #deadband for error
+            if(LA.norm(e0,np.inf) < self.epsilon):
+                e0 = np.zeros(np.shape(e0))
 
             #dynamic feedback term
             mu_arg = np.sign(e0) * e0
