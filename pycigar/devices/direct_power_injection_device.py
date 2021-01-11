@@ -162,12 +162,9 @@ class DirectPowerInjectionDevice(PVDevice):
             low_pass_filter_v = (T * lpf_m * (vk + vkm1) -
                                 (T * lpf_m - 2) * (self.low_pass_filter_v[1])) / \
                                 (2 + T * lpf_m)
-            
+
             self.low_pass_filter_v.append(low_pass_filter_v)
-            
-            ''' if 'v_offset' in self.custom_control_setting:
-                low_pass_filter_v += self.custom_control_setting['v_offset']
-                self.y = self.custom_control_setting['v_offset'] '''
+
             # compute p_set and q_set
             if self.solar_irr >= self.solar_min_value:
                 if low_pass_filter_v <= VBP[4]:
