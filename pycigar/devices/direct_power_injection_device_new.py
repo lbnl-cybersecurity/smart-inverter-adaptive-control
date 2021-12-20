@@ -35,7 +35,7 @@ class DirectPowerInjectionDevice(PVDevice):
         self.high_pass_filter = additional_params.get('high_pass_filter', 1)
         self.gain = additional_params.get('adaptive_gain', 1e5)
         self.delta_t = additional_params.get('delta_t', 1)
-        self.solar_min_value = additional_params.get('solar_min_value', 5)
+        self.solar_min_value = additional_params.get('solar_min_value', 0)
         self.is_butterworth_filter = additional_params.get('is_butterworth_filter', True)
 
         Logger = logger()
