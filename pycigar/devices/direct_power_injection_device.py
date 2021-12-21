@@ -35,7 +35,7 @@ class DirectPowerInjectionDevice(PVDevice):
         self.high_pass_filter = additional_params.get('high_pass_filter', 1)
         self.gain = additional_params.get('adaptive_gain', 1e5)
         self.delta_t = additional_params.get('delta_t', 1)
-        self.solar_min_value = additional_params.get('solar_min_value', 5)
+        self.solar_min_value = additional_params.get('solar_min_value', 0)
         self.is_butterworth_filter = additional_params.get('is_butterworth_filter', True)
 
         Logger = logger()
@@ -162,9 +162,12 @@ class DirectPowerInjectionDevice(PVDevice):
             low_pass_filter_v = (T * lpf_m * (vk + vkm1) -
                                 (T * lpf_m - 2) * (self.low_pass_filter_v[1])) / \
                                 (2 + T * lpf_m)
-
+            
             self.low_pass_filter_v.append(low_pass_filter_v)
-
+            
+            ''' if 'v_offset' in self.custom_control_setting:
+                low_pass_filter_v += self.custom_control_setting['v_offset']
+                self.y = self.custom_control_setting['v_offset'] '''
             # compute p_set and q_set
             if self.solar_irr >= self.solar_min_value:
                 if low_pass_filter_v <= VBP[4]:
@@ -218,10 +221,12 @@ class DirectPowerInjectionDevice(PVDevice):
         # import old V to x
         # inject to node
         k.node.nodes[self.node_id]['PQ_injection']['P'] += self.p_out[1]
-        k.node.nodes[self.node_id]['PQ_injection']['Q'] += self.q_out[1]
+
         if 'pow_inject' in self.custom_control_setting:
             self.q_inj = 10*self.custom_control_setting['pow_inject']
-            k.node.nodes[self.node_id]['PQ_injection']['Q'] += self.q_inj
+            k.node.nodes[self.node_id]['PQ_injection']['Q'] += self.q_inj + self.q_out[1]
+        else:
+            k.node.nodes[self.node_id]['PQ_injection']['Q'] += self.q_out[1]
 
         # log necessary info
         self.log()
