@@ -111,20 +111,6 @@ class PVDevice(BaseDevice):
             lpf_epsilonk = self.gain * (lpf_psik ** 2)
             self.lpf_epsilon.append(lpf_epsilonk)
 
-            y_value = (self.lpf_delta_t * self.lpf_low_pass_filter *
-                    (self.lpf_epsilon[1] + self.lpf_epsilon[0]) - (self.lpf_delta_t * self.lpf_low_pass_filter - 2) * self.lpf_y1[1]) / \
-                    (2 + self.lpf_delta_t * self.lpf_low_pass_filter)
-            self.lpf_y1.append(y_value)
-            self.y = y_value*0.04
-            #print(self.device_id, self.y)
-            if 's701a' in k.node.nodes and 's701b' in k.node.nodes and 's701c' in k.node.nodes:
-                va = abs(k.node.nodes['s701a']['voltage'][k.time - 1])
-                vb = abs(k.node.nodes['s701b']['voltage'][k.time - 1])
-                vc = abs(k.node.nodes['s701c']['voltage'][k.time - 1])
-                mean = (va+vb+vc)/3
-                max_diff = max(abs(va - mean), abs(vb - mean), abs(vc - mean))
-                self.u = max_diff / mean
-
         T = self.delta_t
         lpf_m = self.low_pass_filter_measure
         lpf_o = self.low_pass_filter_output
@@ -141,9 +127,9 @@ class PVDevice(BaseDevice):
             low_pass_filter_v = (T * lpf_m * (vk + vkm1) -
                                 (T * lpf_m - 2) * (self.low_pass_filter_v[1])) / \
                                 (2 + T * lpf_m)
-            
+
             self.low_pass_filter_v.append(low_pass_filter_v)
-            
+
             if 'v_offset' in self.custom_control_setting:
                 low_pass_filter_v += self.custom_control_setting['v_offset']
                 #self.y = self.custom_control_setting['v_offset']
