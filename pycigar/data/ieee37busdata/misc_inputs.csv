@@ -19,5 +19,5 @@ hack start,250.0
 hack end,2000.0
 hack update,4000.0
 measurement filter time constant avg v,10.0
-gamma,20.0
+gamma,1.0
 k,0.0

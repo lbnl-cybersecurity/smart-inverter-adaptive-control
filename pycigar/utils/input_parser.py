@@ -112,13 +112,12 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
         breakpoints_data = pd.read_csv(file_breakpoints_path)
     else:
         breakpoints_data = None
+
     for node in node_names:
         node_default_control_setting = default_control_setting
-        
         if breakpoints_data is not None and node + '_pv' in list(breakpoints_data):
             node_default_control_setting = breakpoints_data[node + '_pv'].tolist()
-        else:
-            node_default_control_setting = [0.97, 1.004, 1.004, 1.03, 1.06]
+
         node_description = {}
         node_description['name'] = node.lower()
         node_description['load_profile'] = None
@@ -127,7 +126,7 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
         device['name'] = 'inverter_' + node.lower()
 
         # configuration for device
-        device['device'] = 'pv_device'
+        device['device'] = 'custom_pv_device'
         device['custom_device_configs'] = {}
         device['custom_device_configs']['default_control_setting'] = node_default_control_setting
         device['custom_device_configs']['delay_timer'] = 60

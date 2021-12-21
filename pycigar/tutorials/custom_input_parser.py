@@ -108,11 +108,14 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
     # read load_solar_data & read
     load_solar_data = pd.read_csv(file_load_solar_path)
     node_names = [node for node in list(load_solar_data) if '_pv' not in node]
-    breakpoints_data = pd.read_csv(file_breakpoints_path)
+    if file_breakpoints_path is not None:
+        breakpoints_data = pd.read_csv(file_breakpoints_path)
+    else:
+        breakpoints_data = None
 
     for node in node_names:
         node_default_control_setting = default_control_setting
-        if node + '_pv' in list(breakpoints_data):
+        if breakpoints_data is not None and node + '_pv' in list(breakpoints_data):
             node_default_control_setting = breakpoints_data[node + '_pv'].tolist()
 
         node_description = {}
