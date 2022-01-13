@@ -4,7 +4,7 @@ from pycigar.controllers.mimic_controller import MimicController
 from pycigar.controllers.oscillation_fixed_controller import OscillationFixedController
 from pycigar.controllers.imbalance_fixed_controller import ImbalanceFixedController
 
-from pycigar.utils.pycigar_registration import pycigar_register, pycigar_make, pycigar_spec
+from pycigar.utils.pycigar_registration import pycigar_register
 
 __all__ = [
     "BaseController",
