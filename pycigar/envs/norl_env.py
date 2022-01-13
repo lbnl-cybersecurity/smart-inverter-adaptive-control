@@ -1,7 +1,5 @@
 import numpy as np
 from pycigar.core.kernel.kernel import Kernel
-from pycigar.utils.logging import logger
-from copy import deepcopy
 import traceback
 import atexit
 
