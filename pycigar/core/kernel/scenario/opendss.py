@@ -177,6 +177,7 @@ class OpenDSSScenario(KernelScenario):
                 self.master_kernel.device.update_kernel_device_info(adversary_id)
 
     def change_load_profile(self, start_time, end_time):
+        """Change the load profile to different time on the load profile."""
         sim_params = self.master_kernel.sim_params
         if sim_params:
             load_scaling_factor = sim_params['scenario_config']['custom_configs']['load_scaling_factor']
