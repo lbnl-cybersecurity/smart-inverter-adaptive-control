@@ -36,7 +36,6 @@ class PVDevice(BaseDevice):
         self.gain = additional_params.get('adaptive_gain', 1e5)
         self.delta_t = additional_params.get('delta_t', 1)
         self.solar_min_value = additional_params.get('solar_min_value', 0)
-        self.is_butterworth_filter = additional_params.get('is_butterworth_filter', False)
 
         Logger = logger()
         if 'init_control_settings' in Logger.custom_metrics:
