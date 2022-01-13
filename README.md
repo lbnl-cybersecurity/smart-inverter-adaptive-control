@@ -41,19 +41,9 @@ You can run the install and test via the [Dockerfile](Dockerfile) if you prefer.
 
 Once the above modules have been successfully installed, we can test the installation by running a few examples. Before trying to run any examples, be
 sure to activate the `pycigar` environment by typing:
-    - If you are using conda: conda activate pycigar
-    - If you are using pip virtual env: source pycigar/bin/activate
 
-<!--
-Let’s see some action:
-
-    python pycigar/tests/sanity_test/sanity_test.py
-
-You can run experiment without installing RLlib. This test experiment is on IEEE 34-Bus System, PV inverters are installed in 13 nodes with 20\% hack during the simulation. After the test finished, you can find a saved result plot in result/sanity_test/
-
-*Note*: the default location for saving result is in the folder `result/`. You can change the default saving result in 
-`pycigar/config.py`.
--->
+    - If you are using conda: `conda activate pycigar`
+    - If you are using pip virtual env: `source pycigar/bin/activate`
 
 ## Experiment results
 Please see in experiments folder.
