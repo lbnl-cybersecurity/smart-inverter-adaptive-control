@@ -132,7 +132,6 @@ def input_parser(misc_inputs_path, dss_path, load_solar_path, breakpoints_path=N
         device['custom_device_configs']['delay_timer'] = 60
         device['custom_device_configs']['threshold'] = 0.05
         device['custom_device_configs']['adaptive_gain'] = 1e5
-        device['custom_device_configs']['is_butterworth_filter'] = False
         device['custom_device_configs']['k'] = k
         device['custom_device_configs']['gamma'] = gamma
         device['custom_device_configs']['lpf_m'] = low_pass_filter_measure_mean
