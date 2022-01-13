@@ -1,10 +1,5 @@
 import numpy as np
 from pycigar.controllers.base_controller import BaseController
-import copy
-from collections import deque
-
-STEP_BUFFER = 4
-
 
 class CustomHackController(BaseController):
 
