@@ -4,28 +4,12 @@ from pycigar.devices import RegulatorDevice
 from pycigar.devices.vectorized_pv_inverter_device import VectorizedPVDevice
 from pycigar.utils.pycigar_registration import pycigar_make
 
-from pycigar.controllers import AdaptiveInverterController
-from pycigar.controllers import FixedController
-# from pycigar.controllers import MimicController
-from pycigar.controllers import AdaptiveFixedController
-from pycigar.controllers import UnbalancedFixedController
-
-import numpy as np
-
 
 class OpenDSSDevice(KernelDevice):
     """See parent class.
 
     Attributes
     ----------
-    adaptive_device_ids : list
-        List of adaptive device ids controlled by adaptive controllers
-    adversary_adaptive_device_ids : list
-        List of adversary adaptive device ids controlled by adaptive attackers
-    adversary_fixed_device_ids : list
-        List of adversary fixed device ids controlled by fixed controllers
-    adversary_rl_device_ids : list
-        List of adversary RL device ids controlled by RL attackers
     all_device_ids : list
         List of all device ids (only the friendly devices)
     devices : dict
@@ -52,14 +36,8 @@ class OpenDSSDevice(KernelDevice):
         Number of fixed devices in the grid
     num_pv_devices : int
         Number of PV devices in the grid
-    num_rl_devices : int
-        Number of devices controlled by RL controllers in the grid
-    opendss_proc : process_id
-        The process id of the opendss process (Deprecated)
     pv_device_ids : list
         List of PV device ids
-    rl_device_ids : list
-        List of RL controlled device ids
     """
 
     def __init__(self, master_kernel):
@@ -68,7 +46,6 @@ class OpenDSSDevice(KernelDevice):
         self.start_device()
 
     def start_device(self):
-        self.opendss_proc = None  # depricated, not in use
         self.devices = {}
 
         self.all_device_ids = []
