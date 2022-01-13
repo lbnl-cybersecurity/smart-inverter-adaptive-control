@@ -4,9 +4,6 @@ from pycigar.controllers.base_controller import BaseController
 import copy
 from collections import deque
 
-STEP_BUFFER = 4 #this is for the RL controller, stores max value of y, not needed here
-
-
 class MRAC_adaptive_controller(BaseController):
 
     def __init__(self, device_id, additional_params):
