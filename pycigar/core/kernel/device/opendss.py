@@ -225,12 +225,12 @@ class OpenDSSDevice(KernelDevice):
         pass
 
     def get_pv_device_ids(self):
-        """Return the list  of PV device ids controlled by RL agents.
+        """Return the list  of PV device ids.
 
         Returns
         -------
         list
-            List of RL device ids
+            List of PV device ids
         """
         if 'pv_device' in self.device_ids:
             return self.device_ids['pv_device']
@@ -238,12 +238,12 @@ class OpenDSSDevice(KernelDevice):
             return []
 
     def get_regulator_device_ids(self):
-        """Return the list  of PV device ids controlled by RL agents.
+        """Return the list  of regulator device ids.
 
         Returns
         -------
         list
-            List of RL device ids
+            List of regulator ids
         """
         if 'regulator_device' in self.device_ids:
             return self.device_ids['regulator_device']
@@ -342,7 +342,7 @@ class OpenDSSDevice(KernelDevice):
         return self.devices[device_id]['device'].p_out[1]
 
     def get_device_q_set(self, device_id):
-        """Return the device's reactive power injection at the current timestep.
+        """Return the device's reactive power injection target at the current timestep.
 
         Parameters
         ----------
@@ -357,7 +357,7 @@ class OpenDSSDevice(KernelDevice):
         return self.devices[device_id]['device'].q_set[1]
 
     def get_device_q_injection(self, device_id):
-        """Return the device's reactive power injection at the current timestep.
+        """Return the device's reactive power injection output at the current timestep.
 
         Parameters
         ----------
@@ -372,7 +372,7 @@ class OpenDSSDevice(KernelDevice):
         return self.devices[device_id]['device'].q_out[1]
 
     def get_device_y(self, device_id):
-        """Return the device's y value at the current timestep.
+        """Return the device's y value (oscillation magnitude) at the current timestep.
 
         Parameters
         ----------
@@ -387,7 +387,7 @@ class OpenDSSDevice(KernelDevice):
         return self.devices[device_id]['device'].y
 
     def get_device_u(self, device_id):
-        """Return the device's u value at the current timestep.
+        """Return the device's u value (imbalance magnitude) at the current timestep.
 
         Parameters
         ----------
