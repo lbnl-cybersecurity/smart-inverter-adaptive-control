@@ -15,7 +15,7 @@ class OscillationFixedController(BaseController):
     """
 
     def __init__(self, device_id, additional_params):
-        """Instantiate an fixed Controller."""
+        """Instantiate."""
         BaseController.__init__(
             self,
             device_id
