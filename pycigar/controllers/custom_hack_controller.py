@@ -32,13 +32,12 @@ class CustomHackController(BaseController):
             self.trigger_time = env.k.time
             return self.action
         else:
-            self.trigger_time
             node_id = env.k.device.devices[self.device_id]['node_id']
             if (env.k.time - self.trigger_time) % self.updateTime == 0:
                 vk = np.mean(np.abs(env.k.node.nodes[node_id]['voltage'][env.k.time - self.average_span - 1:env.k.time - 1]))
                 self.action = -0.005 + vk + self.hack_curve
             return self.action
-    
+
     def reset(self):
         """See parent class."""
         self.trigger = False
