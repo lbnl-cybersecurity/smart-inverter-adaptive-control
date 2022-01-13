@@ -4,7 +4,11 @@ from pycigar.controllers.base_controller import BaseController
 class CustomHackController(BaseController):
 
     def __init__(self, device_id, additional_params):
-        """Instantiate an fixed Controller."""
+        """Instantiate a hack controller.
+        This controller is an oscillation controller.
+        However, it will move the VV-VW curves to a new position
+        every 200 seconds to create a new oscillation.
+        """
         BaseController.__init__(self, device_id)
         self.additional_params = additional_params
         self.trigger = False
@@ -13,7 +17,7 @@ class CustomHackController(BaseController):
         self.average_span = 10
         self.action = None
         self.updateTime = additional_params.get('hack_update', 200)
-    
+
     def get_action(self, env):
         """See parent class."""
         # nothing to do here, the setting in the device is as default
