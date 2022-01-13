@@ -176,10 +176,7 @@ class OpenDSSScenario(KernelScenario):
 
                 self.master_kernel.device.update_kernel_device_info(adversary_id)
 
-    def change_load_profile(self, start_time, end_time,
-                            load_scaling_factor=1.5, solar_scaling_factor=1,
-                            network_data_directory_path=None,
-                            ):
+    def change_load_profile(self, start_time, end_time):
         sim_params = self.master_kernel.sim_params
         if sim_params:
             load_scaling_factor = sim_params['scenario_config']['custom_configs']['load_scaling_factor']

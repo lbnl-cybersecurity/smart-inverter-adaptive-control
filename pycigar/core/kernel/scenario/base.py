@@ -16,7 +16,6 @@ class KernelScenario(object):
     * Hacking definition: the scenario kernel defines what will be happened at
     hack timestep.
 
-    # TODO: define better hacking logic.
     """
 
     def __init__(self, master_kernel):
