@@ -124,12 +124,14 @@ class PyCIGAROpenDSSAPI(object):
         return nodes
 
     def update_all_bus_voltages(self):
+        """Update the voltages of all buses in the circuit."""
         if not np.isinf(dss.Circuit.AllBusMagPu()).any():
             self.puvoltage = dss.Circuit.AllBusMagPu()
         else:
             print('check it out')
 
     def get_all_currents(self):
+        """Get all the currents."""
         self.currents = dss.PDElements.AllCurrentsMagAng()
         if not np.isinf(self.currents).any():
             self.current_result = {}
@@ -140,16 +142,19 @@ class PyCIGAROpenDSSAPI(object):
         return self.current_result
 
     def get_node_voltage(self, node_id):
-        puvoltage = 0 # get rid of this
+        """Get the PU Voltage of a node."""
+        puvoltage = 0
         for phase in range(self.loads[node_id][1]):
             puvoltage += self.puvoltage[self.offsets[self.loads[node_id][0][phase]]]
         puvoltage /= self.loads[node_id][1]
         return puvoltage
 
     def get_total_power(self):
+        """Get the active power of the circuit."""
         return np.array(dss.Circuit.TotalPower())
 
     def get_losses(self):
+        """Get the losses of the circuit."""
         return np.array(dss.Circuit.Losses())
 
     def set_node_kw(self, node_id, value):
@@ -168,16 +173,18 @@ class PyCIGAROpenDSSAPI(object):
 
     # ######################## REGULATOR ############################
     def get_all_regulator_names(self):
+        """Get all regulators in the circuit."""
         return dss.RegControls.AllNames()
 
     def set_regulator_property(self, reg_id, prop):
+        """Set the properties of regulator."""
         dss.RegControls.Name(reg_id)
         for k, v in prop.items():
             if v is not None:
                 v = int(v)
                 if k == 'max_tap_change':
                     dss.RegControls.MaxTapChange(v)
-                elif k == "forward_band":
+                elif k == 'forward_band':
                     dss.RegControls.ForwardBand(v)
                 elif k == 'tap_number':
                     dss.RegControls.TapNumber(v)
@@ -189,18 +196,22 @@ class PyCIGAROpenDSSAPI(object):
                     print('Regulator Parameters unknown by PyCIGAR. Checkout pycigar/utils/opendss/pseudo_api.py')
 
     def get_regulator_tap(self, reg_id):
+        """Get the regulator tap number."""
         dss.RegControls.Name(reg_id)
         return dss.RegControls.TapNumber()
 
     def get_regulator_forwardband(self, reg_id):
+        """Get the regulator forward band."""
         dss.RegControls.Name(reg_id)
         return dss.RegControls.ForwardBand()
 
     def get_regulator_forwardvreg(self, reg_id):
+        """Get the regulator forward vreg."""
         dss.RegControls.Name(reg_id)
         return dss.RegControls.ForwardVreg()
 
     def get_substation_top_voltage(self):
+        """Get the voltage at substation before the transformer."""
         sourcebus = self.all_bus_name[0]
         num_phases = 0
         voltage = 0
@@ -211,9 +222,11 @@ class PyCIGAROpenDSSAPI(object):
         return voltage
 
     def get_substation_bottom_voltage(self):
+        """Get the voltage at substation after the transformer."""
         return 0
 
     def get_worst_u_node(self):
+        """Get imbalance voltage analysis."""
         u_all = []
         v_all = {}
         u_all_real = {}
