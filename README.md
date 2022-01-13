@@ -42,8 +42,8 @@ You can run the install and test via the [Dockerfile](Dockerfile) if you prefer.
 Once the above modules have been successfully installed, we can test the installation by running a few examples. Before trying to run any examples, be
 sure to activate the `pycigar` environment by typing:
 
-    - If you are using conda: `conda activate pycigar`
-    - If you are using pip virtual env: `source pycigar/bin/activate`
+    - If you are using conda: conda activate pycigar
+    - If you are using pip virtual env: source pycigar/bin/activate
 
 ## Experiment results
 Please see in experiments folder.
