@@ -2,10 +2,12 @@ import numpy as np
 from pycigar.controllers.base_controller import BaseController
 
 
-class UnbalancedFixedController(BaseController):
-    """Fixed controller is the controller that do nothing.
+class ImbalanceFixedController(BaseController):
+    """When this controller is triggered, the VV-VW breakpoints
+    will shift to the left or shift to the right according to
+    the phase (a, b, c) of the local node.
 
-    It only returns the 'default_control_setting' value when being called.
+    The goal of this controller is to create voltage imbalance.
 
     Attributes
     ----------
@@ -29,7 +31,7 @@ class UnbalancedFixedController(BaseController):
 
     def get_action(self, env):
         """See parent class."""
-        # nothing to do here, the setting in the device is as default
+        # change the VV-VW breakpoints according to the phase of local node.
         if self.trigger is False:
             if self.device_id[-1].isdigit():
                 self.action = self.hack_curve_all

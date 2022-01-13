@@ -2,10 +2,11 @@ import numpy as np
 from pycigar.controllers.base_controller import BaseController
 
 
-class AdaptiveFixedController(BaseController):
-    """Fixed controller is the controller that do nothing.
+class OscillationFixedController(BaseController):
+    """When this controller is triggered, the VV-VW breakpoints
+    collapse around the average voltage at local node in the latest 10 timesteps.
 
-    It only returns the 'default_control_setting' value when being called.
+    The goal of this controller is to create voltage oscillation.
 
     Attributes
     ----------
@@ -28,7 +29,8 @@ class AdaptiveFixedController(BaseController):
 
     def get_action(self, env):
         """See parent class."""
-        # nothing to do here, the setting in the device is as default
+        # calculate the average voltage of the last 10 timesteps
+        # then collapse the curve around that point
         if self.trigger is False:
             node_id = env.k.device.devices[self.device_id]['node_id']
             if env.k.time - self.average_span - 1 > 0:
