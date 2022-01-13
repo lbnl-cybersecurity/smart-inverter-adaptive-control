@@ -78,7 +78,7 @@ class OpenDSSNode(KernelNode):
         return list(self.nodes.keys())
 
     def get_node_voltage(self, node_id):
-        """Return current voltage at node.
+        """Return voltage at node.
 
         Parameters
         ----------
@@ -93,7 +93,7 @@ class OpenDSSNode(KernelNode):
         return self.nodes[node_id]['voltage'][self.master_kernel.time - 1]
 
     def get_node_load(self, node_id):
-        """Return current load at node.
+        """Return load at node.
 
         Parameters
         ----------
@@ -151,6 +151,7 @@ class OpenDSSNode(KernelNode):
         return self.nodes[node_id]['PQ_injection']['Q']
 
     def get_all_nodes_voltage(self):
+        """Return all voltages from nodes."""
         node_ids = list(self.nodes.keys())
         voltages = []
         for node_id in node_ids:
