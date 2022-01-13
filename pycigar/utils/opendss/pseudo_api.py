@@ -8,7 +8,7 @@ import time
 SBASE = 1000000.0
 
 class PyCIGAROpenDSSAPI(object):
-    """An API used to interact with OpenDSS via a TCP connection."""
+    """An API used to interact with OpenDSS."""
 
     def __init__(self, port):
         """Instantiate the API.
