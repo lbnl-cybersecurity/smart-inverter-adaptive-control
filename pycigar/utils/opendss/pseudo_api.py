@@ -2,15 +2,13 @@
 import opendssdirect as dss
 import numpy as np
 import warnings
-from pycigar.utils.logging import logger
-import time
 
 SBASE = 1000000.0
 
 class PyCIGAROpenDSSAPI(object):
     """An API used to interact with OpenDSS."""
 
-    def __init__(self, port):
+    def __init__(self):
         """Instantiate the API.
 
         Parameters
@@ -18,7 +16,7 @@ class PyCIGAROpenDSSAPI(object):
         port : int
             the port number of the socket connection
         """
-        self.port = port
+        pass
 
     def simulation_step(self):
         """Advance the simulator by one step."""
