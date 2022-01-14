@@ -3,7 +3,6 @@ from collections import deque
 import numpy as np
 from scipy import signal
 
-import pycigar.utils.signal_processing as signal_processing
 from pycigar.devices.base_device import BaseDevice
 
 from pycigar.utils.logging import logger

@@ -65,7 +65,7 @@ class OpenDSSDevice(KernelDevice):
         """See parent class."""
         self.kernel_api = kernel_api
 
-    def add(self, name, connect_to, device=('pv_device', {}), controller=('adaptive_inverter_controller', {}),
+    def add(self, name, connect_to, device=('pv_device', None), controller=(None, None),
             adversary_controller=None, hack=None):
         """Add a new device with controller into the grid connecting to a node.
 
@@ -203,13 +203,13 @@ class OpenDSSDevice(KernelDevice):
 
                     self.update_kernel_device_info(device_id)
 
-            if self.master_kernel.sim_params['vectorized_mode']:
+            if self.master_kernel.sim_params and self.master_kernel.sim_params['vectorized_mode']:
                 self.vectorized_pv_inverter_device = VectorizedPVDevice(self.master_kernel)
         else:
             # get the injection here
             # get the new VBP, then push PV to node
             # update pv device
-            if self.master_kernel.sim_params['vectorized_mode']:
+            if self.master_kernel.sim_params and self.master_kernel.sim_params['vectorized_mode']:
                 self.vectorized_pv_inverter_device.update(self.master_kernel)
                 for device_type in self.device_ids:
                     if device_type != 'pv_device':
@@ -466,7 +466,7 @@ class OpenDSSDevice(KernelDevice):
                 device = self.devices[device_id]['device']
                 device.set_control_setting(control_setting[i]) if type(control_setting[i]) is not tuple else device.set_control_setting(*control_setting[i])
 
-                if self.master_kernel.sim_params['vectorized_mode']:
+                if self.master_kernel.sim_params and self.master_kernel.sim_params['vectorized_mode']:
                     self.vectorized_pv_inverter_device.set_control_setting(device_id, control_setting[i])
 
 

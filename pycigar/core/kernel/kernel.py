@@ -61,11 +61,10 @@ class Kernel(object):
         self.sim_params = sim_params
         if self.sim_params != None:
             self.multi_config = self.sim_params['scenario_config']['multi_config']
+            self.data_length = pd.read_csv(self.sim_params['scenario_config']['network_data_directory']).shape[0] - 1
         self.time = 0
         # initialize logger
         logger()
-
-        self.data_length = pd.read_csv(self.sim_params['scenario_config']['network_data_directory']).shape[0] - 1
 
         if simulator == "opendss":
             self.simulation = OpenDSSSimulation(self)

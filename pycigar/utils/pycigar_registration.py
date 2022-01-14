@@ -1,7 +1,6 @@
 import re
 import copy
 import importlib
-import warnings
 
 from pycigar.utils.exeptions import FatalPyCIGARError
 
